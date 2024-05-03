@@ -29,7 +29,7 @@ namespace MyApp
             Console.ReadKey();
         }
 
-
+        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
         static string CheckForWinner()
         {
@@ -71,7 +71,7 @@ namespace MyApp
             return "The cat";
         }
 
-
+        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
         static int GetPlayerInput(bool isPlayer1)
         {
@@ -101,7 +101,7 @@ namespace MyApp
             return 1;
         }
 
-
+        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
         static void UpdateDisplay()
         {
