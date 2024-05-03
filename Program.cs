@@ -73,7 +73,7 @@ namespace MyApp
 
 
 
-        static int GetPlayerInput(bool isPlayer1) // Add testing for already filled grids.
+        static int GetPlayerInput(bool isPlayer1)
         {
             int[] gridCoordinates = [2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 2, 0, 1, 2];
             char symbol = isPlayer1 ? 'X' : 'O'; // Swaps the symbol used depending on who's turn it is.
