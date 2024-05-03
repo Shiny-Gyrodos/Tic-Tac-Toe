@@ -31,7 +31,7 @@ namespace MyApp
 
 
 
-        static string CheckForWinner() // This method needs a total rewrite.
+        static string CheckForWinner()
         {
             int gridSpace1;
             int gridSpace2;
@@ -96,7 +96,7 @@ namespace MyApp
                         UpdateDisplay();
                     }
                 }
-                catch{}
+                catch{ UpdateDisplay(); }
             }
             return 1;
         }
