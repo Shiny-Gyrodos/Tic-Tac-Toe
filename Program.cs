@@ -14,6 +14,10 @@ namespace MyApp
             bool player1turn = true;
             int spacesFilled = 0;
 
+            Console.Write("Ready to play some Tic-Tac-Toe?\n\nPress any key to continue.");
+            Console.ReadKey();
+            Console.Clear();
+
             UpdateDisplay();
 
             while (gameActive && spacesFilled < 9)
@@ -106,7 +110,7 @@ namespace MyApp
         static void UpdateDisplay()
         {
             Console.Clear();
-            Console.WriteLine($"{grid[0, 0]} | {grid[0, 1]} | {grid[0, 2]}\n---------\n{grid[1, 0]} | {grid[1, 1]} | {grid[1, 2]}\n---------\n{grid[2, 0]} | {grid[2, 1]} | {grid[2, 2]}");
+            Console.WriteLine($"Place X/O's with the numeric keypad.\n\n{grid[0, 0]} | {grid[0, 1]} | {grid[0, 2]}\n---------\n{grid[1, 0]} | {grid[1, 1]} | {grid[1, 2]}\n---------\n{grid[2, 0]} | {grid[2, 1]} | {grid[2, 2]}");
         }
     }
 }
