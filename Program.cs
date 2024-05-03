@@ -4,25 +4,26 @@ namespace MyApp
 {
     internal class Program
     {
-        static char winner;
         static bool gameActive = true;
         static char[,] grid = {{' ', ' ', ' '},
                                {' ', ' ', ' '},
                                {' ', ' ', ' '}};
         static void Main(string[] args)
         {
+            string winner = "";
             bool player1turn = true;
+            int spacesFilled = 0;
 
             UpdateDisplay();
 
-            while (gameActive)
+            while (gameActive && spacesFilled < 9)
             {
-                GetPlayerInput(player1turn);
+                spacesFilled += GetPlayerInput(player1turn);
                 UpdateDisplay();
 
                 player1turn = player1turn == true ? false : true; // Swaps the symbol being used.
 
-                CheckForWinner();
+                winner = CheckForWinner();
             }
             Console.Write($"\n{winner} wins!\n\nPress any key to close the window.");
             Console.ReadKey();
@@ -30,7 +31,7 @@ namespace MyApp
 
 
 
-        static void CheckForWinner() // This method needs a total rewrite.
+        static string CheckForWinner() // This method needs a total rewrite.
         {
             int gridSpace1;
             int gridSpace2;
@@ -57,8 +58,7 @@ namespace MyApp
                 if (symbols[0] == symbols[1] && symbols[1] == symbols[2] && symbols[0] != ' ')
                 {
                     gameActive = false;
-                    winner = symbols[0];
-                    i = 6; // Breaks out of for loop early.
+                    return symbols[0].ToString();
                 }
             }
 
@@ -66,16 +66,17 @@ namespace MyApp
             if (grid[0, 0] == grid[1, 1] && grid[1, 1] == grid[2, 2] && grid[1, 1] != ' ' || grid[2, 0] == grid[1, 1] && grid[1, 1] == grid[0, 2] && grid[1, 1] != ' ')
             {
                 gameActive = false;
-                winner = grid[1, 1]; // Both diagonals share this point.
+                return grid[1, 1].ToString(); // Both diagonals share this point.
             }
+            return "The cat";
         }
 
 
 
-        static void GetPlayerInput(bool isPlayer1) // Add testing for already filled grids.
+        static int GetPlayerInput(bool isPlayer1) // Add testing for already filled grids.
         {
-            char[] gridOptions = [grid[2, 0], grid[2, 1], grid[2, 2], grid[1, 0], grid[1, 1], grid[1, 2], grid[0, 0], grid[0, 1], grid[0, 2]];
-            char symbol = isPlayer1 ? 'X' : 'O';
+            int[] gridCoordinates = [2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 2, 0, 1, 2];
+            char symbol = isPlayer1 ? 'X' : 'O'; // Swaps the symbol used depending on who's turn it is.
             
             bool validChoiceMade = false;
 
@@ -85,14 +86,19 @@ namespace MyApp
                 {
                     int playerInput = int.Parse(Console.ReadKey().KeyChar.ToString());
 
-                    if (gridOptions[playerInput - 1] == ' ')
+                    if (grid[gridCoordinates[playerInput - 1], gridCoordinates[playerInput + 8]] == ' ')
                     {
-                        gridOptions[playerInput - 1] = symbol; // Needs to modify the actual grid.
+                        grid[gridCoordinates[playerInput - 1], gridCoordinates[playerInput + 8]] = symbol;
                         validChoiceMade = true;
+                    }
+                    else
+                    {
+                        UpdateDisplay();
                     }
                 }
                 catch{}
             }
+            return 1;
         }
 
 
