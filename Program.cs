@@ -74,53 +74,21 @@ namespace MyApp
 
         static void GetPlayerInput(bool isPlayer1) // Add testing for already filled grids.
         {
+            char[] gridOptions = [grid[2, 0], grid[2, 1], grid[2, 2], grid[1, 0], grid[1, 1], grid[1, 2], grid[0, 0], grid[0, 1], grid[0, 2]];
             char symbol = isPlayer1 ? 'X' : 'O';
+            
             bool validChoiceMade = false;
 
             while (!validChoiceMade)
             {
                 try
                 {
-                    int playInput = int.Parse(Console.ReadKey().KeyChar.ToString());
+                    int playerInput = int.Parse(Console.ReadKey().KeyChar.ToString());
 
-                    switch (playInput)
+                    if (gridOptions[playerInput - 1] == ' ')
                     {
-                        case 1:
-                            grid[2, 0] = symbol;
-                            validChoiceMade = true;
-                            break;
-                        case 2:
-                            grid[2, 1] = symbol;
-                            validChoiceMade = true;
-                            break;
-                        case 3:
-                            grid[2, 2] = symbol;
-                            validChoiceMade = true;
-                            break;
-                        case 4:
-                            grid[1, 0] = symbol;
-                            validChoiceMade = true;
-                            break;
-                        case 5:
-                            grid[1, 1] = symbol;
-                            validChoiceMade = true;
-                            break;
-                        case 6:
-                            grid[1, 2] = symbol;
-                            validChoiceMade = true;
-                            break;
-                        case 7:
-                            grid[0, 0] = symbol;
-                            validChoiceMade = true;
-                            break;
-                        case 8:
-                            grid[0, 1] = symbol;
-                            validChoiceMade = true;
-                            break;
-                        case 9:
-                            grid[0, 2] = symbol;
-                            validChoiceMade = true;
-                            break;
+                        gridOptions[playerInput - 1] = symbol; // Needs to modify the actual grid.
+                        validChoiceMade = true;
                     }
                 }
                 catch{}
