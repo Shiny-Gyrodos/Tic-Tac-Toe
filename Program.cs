@@ -23,9 +23,7 @@ namespace MyApp
             while (gameActive && spacesFilled < 9)
             {
                 spacesFilled += GetPlayerInput(player1turn);
-                UpdateDisplay();
-
-                player1turn = player1turn == true ? false : true; // Swaps the symbol being used.
+                player1turn = !player1turn; // Swaps the symbol being used.
 
                 winner = CheckForWinner();
             }
@@ -35,7 +33,7 @@ namespace MyApp
 
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-        static string CheckForWinner()
+        static string CheckForWinner() // Returns winner symbol, or "The cat" if the game is a draw.
         {
             int gridSpace1;
             int gridSpace2;
@@ -77,7 +75,7 @@ namespace MyApp
 
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-        static int GetPlayerInput(bool isPlayer1)
+        static int GetPlayerInput(bool isPlayer1) // Returns 1, which is added to the symbolsPlaced variable.
         {
             int[] gridCoordinates = [2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 2, 0, 1, 2];
             char symbol = isPlayer1 ? 'X' : 'O'; // Swaps the symbol used depending on who's turn it is.
@@ -95,12 +93,9 @@ namespace MyApp
                         grid[gridCoordinates[playerInput - 1], gridCoordinates[playerInput + 8]] = symbol;
                         validChoiceMade = true;
                     }
-                    else
-                    {
-                        UpdateDisplay();
-                    }
                 }
-                catch{ UpdateDisplay(); }
+                catch{}
+                finally{ UpdateDisplay(); }
             }
             return 1;
         }
