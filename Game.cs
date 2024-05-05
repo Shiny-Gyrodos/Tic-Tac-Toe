@@ -4,9 +4,9 @@ namespace MyApp;
 
 internal class Game
 {
-    private SquareType? winner = null;
+    public SquareType? winner = null;
     private bool player1turn = true;
-    private SquareType[] grid;
+    public SquareType[] grid;
     private static int[][] victoryPatterns = new[]
     {
         // rows
@@ -22,20 +22,18 @@ internal class Game
         new[] { 2, 4, 6 },
     };
 
+    private int turnsPlayed = 0;
+
     public void Start()
     {
         grid = new SquareType[9];
         player1turn = true;
-
-        UpdateDisplay();
     }
 
-    public bool PlayTurn()
+    public bool PlayTurn(int squareIndex)
     {
-        SetPlayerInput(player1turn ? SquareType.PlayerOne : SquareType.PlayerTwo);
-        var hasEnded = TryGetWinner(out winner);
-        UpdateDisplay();
-        return !hasEnded;
+        SetPlayerInput(squareIndex);
+        return !TryGetWinner(out winner) && turnsPlayed < 9;
     }
 
     private bool TryGetWinner([NotNullWhen(true)] out SquareType? winner)
@@ -56,49 +54,15 @@ internal class Game
         return false;
     }
 
-    private void SetPlayerInput(SquareType player)
+    private void SetPlayerInput(int squareIndex)
     {
-        while (true)
+        if (grid[squareIndex] != SquareType.Empty)
         {
-            // This is little trick to convert a char to an int.
-            // A char is in fact an int (the corresponding ASCII index)
-            // but the index and the represented digit isn't aligned
-            // thus, we need to align the two by subtracting the input with the index of the 0 digit
-            // We could use other utility methods such as int.TryParse, but it requires a string
-            int input = Console.ReadKey().KeyChar - '0';
-
-            if (
-                // this line is using pattern matching, and it is the equivalent of: input >= 1 && input <= 9, it's only shorter
-                input is >= 1 and <= 9
-                && grid[input - 1] == SquareType.Empty)
-            {
-                grid[input - 1] = player;
-                player1turn = player1turn == true ? false : true;
-                // return instruction can also return no value
-                // and it will end the method execution, thus breaking the while loop
-                return;
-            }
-
-            UpdateDisplay();
+            return;
         }
-    }
 
-    void UpdateDisplay()
-    {
-        Console.Clear();
-
-        // the three quotes notation is calls raw string litterals
-        // it will interprets code breaking lines and will remove leading indentation
-        // to the position of the first ending quotes.
-        var output = $"""
-            Place X/O's with the numeric keypad.
-
-            {grid[6].Display()} | {grid[7].Display()} | {grid[8].Display()}
-            ---------
-            {grid[3].Display()} | {grid[4].Display()} | {grid[5].Display()}
-            ---------
-            {grid[0].Display()} | {grid[1].Display()} | {grid[2].Display()}
-            """;
-        Console.WriteLine(output);
+        grid[squareIndex] = player1turn ? SquareType.PlayerOne : SquareType.PlayerTwo;
+        player1turn = !player1turn;
+        turnsPlayed++;
     }
 }
