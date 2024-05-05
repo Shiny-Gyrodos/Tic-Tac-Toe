@@ -3,16 +3,26 @@
 internal class Program
 {
     static bool gameActive = true;
+    static SquareType[] grid = new SquareType[9];
 
-    // the default value of an array, is an array of n-size filled with item type's 
-    // default value.
-    // The default value of enum is the default value of its backed type
-    // Here, the backed type is numeric and default value of a numeric type is always 0
-    // The following code is an equivalent of the previous versions
-    static SquareType[,] grid = new SquareType[3, 3];
+    private static int[][] victoryPatterns = new[]
+    {
+        // rows
+        new[] { 0, 1, 2 },
+        new[] { 3, 4, 5 },
+        new[] { 6, 7, 8 },
+        // columns
+        new[] { 0, 3, 6 },
+        new[] { 1, 4, 7 },
+        new[] { 2, 5, 8 },
+        // diagonals
+        new[] { 0, 4, 8 },
+        new[] { 2, 4, 6 },
+    };
+
     static void Main(string[] args)
     {
-        string winner = "";
+        SquareType? winner;
         bool player1turn = true;
         int spacesFilled = 0;
 
@@ -22,89 +32,67 @@ internal class Program
 
         UpdateDisplay();
 
-        while (gameActive && spacesFilled < 9)
+        // We are doing two things at once here
+        // affecting winner with CheckForWinner()'s result
+        // checking if winner is null
+        // if the winner is set with a not-null value the game is ended.
+        while ((winner = CheckForWinner()) is null)
         {
-            spacesFilled += GetPlayerInput(player1turn);
+            SetPlayerInput(player1turn ? SquareType.PlayerOne : SquareType.PlayerTwo);
+            spacesFilled++;
             UpdateDisplay();
 
             player1turn = player1turn == true ? false : true; // Swaps the symbol being used.
 
-            winner = CheckForWinner();
         }
-        Console.Write($"\n{winner} wins!\n\nPress any key to close the window.");
+        Console.Write($"\n{winner.Value.Display()} wins!\n\nPress any key to close the window.");
         Console.ReadKey();
     }
 
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-    static string CheckForWinner()
+    static SquareType? CheckForWinner()
     {
-        int gridSpace1;
-        int gridSpace2;
-        SquareType[] symbols = new SquareType[3];
-
-        for (int i = 0; i < 6; i++) // Tests horizontal and vertical lines.
+        foreach (var pattern in victoryPatterns)
         {
-            for (int j = 0; j < 3; j++)
+            if (grid[pattern[0]] == grid[pattern[1]]
+                && grid[pattern[1]] == grid[pattern[2]]
+                && grid[pattern[0]] != SquareType.Empty
+               )
             {
-                if (i >= 3)
-                {
-                    gridSpace1 = i - 3;
-                    gridSpace2 = j;
-                }
-                else
-                {
-                    gridSpace1 = j;
-                    gridSpace2 = i;
-                }
-
-                symbols[j] = grid[gridSpace1, gridSpace2];
-            }
-
-            if (symbols[0] == symbols[1] && symbols[1] == symbols[2] && symbols[0] != SquareType.Empty)
-            {
-                gameActive = false;
-                return symbols[0].ToString();
+                return grid[pattern[0]];
             }
         }
 
-        // Tests diagonal lines.
-        if (grid[0, 0] == grid[1, 1] && grid[1, 1] == grid[2, 2] && grid[1, 1] != SquareType.Empty || grid[2, 0] == grid[1, 1] && grid[1, 1] == grid[0, 2] && grid[1, 1] != SquareType.Empty)
-        {
-            gameActive = false;
-            return grid[1, 1].ToString(); // Both diagonals share this point.
-        }
-        return "The cat";
+        return null;
     }
 
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-    static int GetPlayerInput(bool isPlayer1)
+    static void SetPlayerInput(SquareType player)
     {
-        int[] gridCoordinates = [2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 2, 0, 1, 2];
-        SquareType symbol = isPlayer1 ? SquareType.PlayerOne : SquareType.PlayerTwo; // Swaps the symbol used depending on who's turn it is.
-
-        bool validChoiceMade = false;
-
-        while (!validChoiceMade)
+        while (true)
         {
-            try
-            {
-                int playerInput = int.Parse(Console.ReadKey().KeyChar.ToString());
+            // This is little trick to convert a char to an int.
+            // A char is in fact an int (the corresponding ASCII index)
+            // but the index and the represented digit isn't aligned
+            // thus, we need to align the two by subtracting the input with the index of the 0 digit
+            // We could use other utility methods such as int.TryParse, but it requires a string
+            int input = Console.ReadKey().KeyChar - '0';
 
-                if (grid[gridCoordinates[playerInput - 1], gridCoordinates[playerInput + 8]] == SquareType.Empty)
-                {
-                    grid[gridCoordinates[playerInput - 1], gridCoordinates[playerInput + 8]] = symbol;
-                    validChoiceMade = true;
-                }
-                else
-                {
-                    UpdateDisplay();
-                }
+            if (
+                // this line is using pattern matching, and it is the equivalent of: input >= 1 && input <= 9, it's only shorter
+                input is >= 1 and <= 9
+                && grid[input - 1] == SquareType.Empty)
+            {
+                grid[input - 1] = player;
+                // return instruction can also return no value
+                // and it will end the method execution, thus breaking the while loop
+                return;
             }
-            catch { UpdateDisplay(); }
+
+            UpdateDisplay();
         }
-        return 1;
     }
 
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -112,6 +100,6 @@ internal class Program
     static void UpdateDisplay()
     {
         Console.Clear();
-        Console.WriteLine($"Place X/O's with the numeric keypad.\n\n{grid[0, 0].Display()} | {grid[0, 1].Display()} | {grid[0, 2].Display()}\n---------\n{grid[1, 0].Display()} | {grid[1, 1].Display()} | {grid[1, 2].Display()}\n---------\n{grid[2, 0].Display()} | {grid[2, 1].Display()} | {grid[2, 2].Display()}");
+        Console.WriteLine($"Place X/O's with the numeric keypad.\n\n{grid[6].Display()} | {grid[7].Display()} | {grid[8].Display()}\n---------\n{grid[3].Display()} | {grid[4].Display()} | {grid[5].Display()}\n---------\n{grid[0].Display()} | {grid[1].Display()} | {grid[2].Display()}");
     }
 }
