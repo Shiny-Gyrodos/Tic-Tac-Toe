@@ -2,7 +2,6 @@
 
 internal class Program
 {
-    static bool gameActive = true;
     static SquareType[] grid = new SquareType[9];
 
     private static int[][] victoryPatterns = new[]
@@ -100,6 +99,19 @@ internal class Program
     static void UpdateDisplay()
     {
         Console.Clear();
-        Console.WriteLine($"Place X/O's with the numeric keypad.\n\n{grid[6].Display()} | {grid[7].Display()} | {grid[8].Display()}\n---------\n{grid[3].Display()} | {grid[4].Display()} | {grid[5].Display()}\n---------\n{grid[0].Display()} | {grid[1].Display()} | {grid[2].Display()}");
+
+        // the three quotes notation is calls raw string litterals
+        // it will interprets code breaking lines and will remove leading indentation
+        // to the position of the first ending quotes.
+        var output = $"""
+            Place X/O's with the numeric keypad.
+
+            {grid[6].Display()} | {grid[7].Display()} | {grid[8].Display()}
+            ---------
+            {grid[3].Display()} | {grid[4].Display()} | {grid[5].Display()}
+            ---------
+            {grid[0].Display()} | {grid[1].Display()} | {grid[2].Display()}
+            """;
+        Console.WriteLine(output);
     }
 }
