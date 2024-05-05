@@ -1,14 +1,5 @@
 ﻿namespace MyApp;
 
-internal class Program
-{
-    static void Main(string[] args)
-    {
-        var game = new Game();
-        game.Run();
-    }
-}
-
 internal class Game
 {
     private SquareType[] grid = new SquareType[9];
@@ -104,14 +95,14 @@ internal class Game
         // it will interprets code breaking lines and will remove leading indentation
         // to the position of the first ending quotes.
         var output = $"""
-            Place X/O's with the numeric keypad.
+                      Place X/O's with the numeric keypad.
 
-            {grid[6].Display()} | {grid[7].Display()} | {grid[8].Display()}
-            ---------
-            {grid[3].Display()} | {grid[4].Display()} | {grid[5].Display()}
-            ---------
-            {grid[0].Display()} | {grid[1].Display()} | {grid[2].Display()}
-            """;
+                      {grid[6].Display()} | {grid[7].Display()} | {grid[8].Display()}
+                      ---------
+                      {grid[3].Display()} | {grid[4].Display()} | {grid[5].Display()}
+                      ---------
+                      {grid[0].Display()} | {grid[1].Display()} | {grid[2].Display()}
+                      """;
         Console.WriteLine(output);
     }
 }
