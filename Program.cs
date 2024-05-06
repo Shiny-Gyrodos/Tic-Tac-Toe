@@ -1,111 +1,79 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿namespace MyApp;
 
-namespace MyApp
+internal static class Program
 {
-    internal class Program
+    static readonly char[,] grid = {{' ', ' ', ' '},
+                                    {' ', ' ', ' '},
+                                    {' ', ' ', ' '}};
+    static bool isPlayer1Turn = true;
+    static string winner = "The cat";
+
+    static void Main()
     {
-        static bool gameActive = true;
-        static char[,] grid = {{' ', ' ', ' '},
-                               {' ', ' ', ' '},
-                               {' ', ' ', ' '}};
-        static void Main(string[] args)
+        Console.Write("Ready to play some Tic-Tac-Toe?\n\nPress any key to continue.");
+        Console.ReadKey();
+
+        for (int i = 0; i < 9; i++)
         {
-            string winner = "";
-            bool player1turn = true;
-            int spacesFilled = 0;
+            GetPlayerInput();
+            if (HasWinner())
+                break;
+        }
+        Console.Write($"\n{winner} wins!\n\nPress any key to close the window.");
+        Console.ReadKey();
+    }
 
-            Console.Write("Ready to play some Tic-Tac-Toe?\n\nPress any key to continue.");
-            Console.ReadKey();
-            Console.Clear();
+    static bool HasWinner()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            // Check horizontal and vertical lines
+            if ((grid[i, 0] == grid[i, 1] && grid[i, 1] == grid[i, 2] && grid[i, 0] != ' ') ||
+                (grid[0, i] == grid[1, i] && grid[1, i] == grid[2, i] && grid[0, i] != ' '))
+            {
+                winner = grid[i, i].ToString();
+                return true;
+            }
+        }
 
+        // Check diagonal lines
+        if ((grid[0, 0] == grid[1, 1] && grid[1, 1] == grid[2, 2] && grid[1, 1] != ' ') ||
+            (grid[0, 2] == grid[1, 1] && grid[1, 1] == grid[2, 0] && grid[1, 1] != ' '))
+        {
+            winner = grid[1, 1].ToString();
+            return true;
+        }
+
+        return false;
+    }
+
+    static void GetPlayerInput()
+    {
+        int[] gridCoordinates = [2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 2, 0, 1, 2];
+        char symbol = isPlayer1Turn ? 'X' : 'O'; // Swaps the symbol used depending on who's turn it is.            
+        bool isValid = false;
+
+        while (!isValid)
+        {
             UpdateDisplay();
-
-            while (gameActive && spacesFilled < 9)
+            if (int.TryParse(Console.ReadKey().KeyChar.ToString(), out int playerInput) &&
+                grid[gridCoordinates[playerInput - 1], gridCoordinates[playerInput + 8]] == ' ')
             {
-                spacesFilled += GetPlayerInput(player1turn);
-                player1turn = !player1turn; // Swaps the symbol being used.
-
-                winner = CheckForWinner();
+                grid[gridCoordinates[playerInput - 1], gridCoordinates[playerInput + 8]] = symbol;
+                isValid = true;
             }
-            Console.Write($"\n{winner} wins!\n\nPress any key to close the window.");
-            Console.ReadKey();
         }
+        isPlayer1Turn = !isPlayer1Turn;
+    }
 
-        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
-        static string CheckForWinner() // Returns winner symbol, or "The cat" if the game is a draw.
-        {
-            int gridSpace1;
-            int gridSpace2;
-            char[] symbols = new char[3];
-
-            for (int i = 0; i < 6; i++) // Tests horizontal and vertical lines.
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    if (i >= 3)
-                    {
-                        gridSpace1 = i - 3;
-                        gridSpace2 = j;
-                    }
-                    else
-                    {
-                        gridSpace1 = j;
-                        gridSpace2 = i;
-                    }
-
-                    symbols[j] = grid[gridSpace1, gridSpace2];
-                }
-
-                if (symbols[0] == symbols[1] && symbols[1] == symbols[2] && symbols[0] != ' ')
-                {
-                    gameActive = false;
-                    return symbols[0].ToString();
-                }
-            }
-
-            // Tests diagonal lines.
-            if (grid[0, 0] == grid[1, 1] && grid[1, 1] == grid[2, 2] && grid[1, 1] != ' ' || grid[2, 0] == grid[1, 1] && grid[1, 1] == grid[0, 2] && grid[1, 1] != ' ')
-            {
-                gameActive = false;
-                return grid[1, 1].ToString(); // Both diagonals share this point.
-            }
-            return "The cat";
-        }
-
-        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
-        static int GetPlayerInput(bool isPlayer1) // Returns 1, which is added to the symbolsPlaced variable.
-        {
-            int[] gridCoordinates = [2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 2, 0, 1, 2];
-            char symbol = isPlayer1 ? 'X' : 'O'; // Swaps the symbol used depending on who's turn it is.
-            
-            bool validChoiceMade = false;
-
-            while (!validChoiceMade)
-            {
-                try
-                {
-                    int playerInput = int.Parse(Console.ReadKey().KeyChar.ToString());
-
-                    if (grid[gridCoordinates[playerInput - 1], gridCoordinates[playerInput + 8]] == ' ')
-                    {
-                        grid[gridCoordinates[playerInput - 1], gridCoordinates[playerInput + 8]] = symbol;
-                        validChoiceMade = true;
-                    }
-                }
-                catch{}
-                finally{ UpdateDisplay(); }
-            }
-            return 1;
-        }
-
-        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
-        static void UpdateDisplay()
-        {
-            Console.Clear();
-            Console.WriteLine($"Place X/O's with the numeric keypad.\n\n{grid[0, 0]} | {grid[0, 1]} | {grid[0, 2]}\n---------\n{grid[1, 0]} | {grid[1, 1]} | {grid[1, 2]}\n---------\n{grid[2, 0]} | {grid[2, 1]} | {grid[2, 2]}");
-        }
+    static void UpdateDisplay()
+    {
+        Console.Clear();
+        Console.WriteLine("Place X/O's with the numeric keypad.\n\n" +
+                     $"{grid[0, 0]} | {grid[0, 1]} | {grid[0, 2]}\n" +
+                     "---------\n"                                   +
+                     $"{grid[1, 0]} | {grid[1, 1]} | {grid[1, 2]}\n" +
+                     "---------\n"                                   +
+                     $"{grid[2, 0]} | {grid[2, 1]} | {grid[2, 2]}");
     }
 }
