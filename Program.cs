@@ -5,7 +5,6 @@ internal class Program
     static void Main(string[] args)
     {
         var game = new Game();
-
         Console.WriteLine("Ready to play some Tic-Tac-Toe?");
         Console.WriteLine("Press any key to continue.");
         Console.ReadKey();
