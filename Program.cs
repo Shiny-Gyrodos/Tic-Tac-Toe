@@ -6,26 +6,25 @@ internal static class Program
                                     {' ', ' ', ' '},
                                     {' ', ' ', ' '}};
     static bool isPlayer1Turn = true;
+    static string winner = "The cat";
     static void Main()
     {
-        string winner = "";
-
         Console.Write("Ready to play some Tic-Tac-Toe?\n\nPress any key to continue.");
         Console.ReadKey();
         Console.Clear();
 
         UpdateDisplay();
-
         for (int i = 0; i < 9; i++)
         {
             GetPlayerInput();
-            winner = CheckForWinner();
+            if (CheckForWinner())
+                break;
         }
         Console.Write($"\n{winner} wins!\n\nPress any key to close the window.");
         Console.ReadKey();
     }
 
-    static string CheckForWinner() // Returns winner symbol, or "The cat" if the game is a draw.
+    static bool CheckForWinner() // Returns winner symbol, or "The cat" if the game is a draw.
     {
         int gridSpace1;
         int gridSpace2;
@@ -51,7 +50,8 @@ internal static class Program
 
             if (symbols[0] == symbols[1] && symbols[1] == symbols[2] && symbols[0] != ' ')
             {
-                return symbols[0].ToString();
+                winner = symbols[0].ToString();
+                return true;
             }
         }
 
@@ -59,9 +59,10 @@ internal static class Program
         if ((grid[0, 0] == grid[1, 1] && grid[1, 1] == grid[2, 2] && grid[1, 1] != ' ') ||
             (grid[2, 0] == grid[1, 1] && grid[1, 1] == grid[0, 2] && grid[1, 1] != ' '))
         {
-            return grid[1, 1].ToString(); // Both diagonals share this point.
+            winner = grid[1, 1].ToString(); // Both diagonals share this point.
+            return true;
         }
-        return "The cat";
+        return false;
     }
 
     static void GetPlayerInput()
